@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"evion-platform","appId":"1:640018098360:android:03f361e3aa8e5ba6b6ac4d","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"evion-platform","configurations":{"android":"1:640018098360:android:03f361e3aa8e5ba6b6ac4d","ios":"1:640018098360:ios:6ac2fa232f0523c2b6ac4d"}}}}}}

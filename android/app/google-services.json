@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "640018098360",
+    "project_id": "evion-platform",
+    "storage_bucket": "evion-platform.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640018098360:android:03f361e3aa8e5ba6b6ac4d",
+        "android_client_info": {
+          "package_name": "com.example.evion_driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-xFnXB64aVK05nsn3zHXi3mYeEsqyzEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640018098360:android:fd14992f61c45fe7b6ac4d",
+        "android_client_info": {
+          "package_name": "com.example.evion_passenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-xFnXB64aVK05nsn3zHXi3mYeEsqyzEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
