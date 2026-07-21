@@ -1,33 +1,23 @@
-import '../../data/models/trip_model.dart';
-
-enum DriverTripStatus {
-  idle,
-  starting,
-  onTrip,
-  ending,
-  error,
-}
+import '../../data/models/active_trip.dart';
 
 class TripState {
-  final DriverTripStatus status;
-  final TripModel? trip;
-  final String? message;
+  final ActiveTrip trip;
 
   const TripState({
-    this.status = DriverTripStatus.idle,
-    this.trip,
-    this.message,
+    required this.trip,
   });
 
+  factory TripState.initial() {
+    return TripState(
+      trip: ActiveTrip.initial(),
+    );
+  }
+
   TripState copyWith({
-    DriverTripStatus? status,
-    TripModel? trip,
-    String? message,
+    ActiveTrip? trip,
   }) {
     return TripState(
-      status: status ?? this.status,
       trip: trip ?? this.trip,
-      message: message,
     );
   }
 }

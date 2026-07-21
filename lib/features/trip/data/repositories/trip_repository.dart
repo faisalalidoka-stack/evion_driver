@@ -1,41 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../models/trip_model.dart';
-import '../models/trip_status.dart';
+import '../models/active_trip.dart';
+import '../services/trip_service.dart';
 
 class TripRepository {
-  TripRepository({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  TripRepository({
+    TripService? service,
+  }) : _service = service ?? TripService();
 
-  final FirebaseFirestore _firestore;
+  final TripService _service;
 
-  CollectionReference<Map<String, dynamic>> get _trips =>
-      _firestore.collection('trips');
-
-  String generateTripId() => _trips.doc().id;
-
-  Future<void> startTrip(TripModel trip) async {
-    await _trips.doc(trip.id).set(trip.toMap());
-  }
-
-  Future<void> updateLocation(
-      String tripId, {
-        required GeoPoint location,
-        required double speed,
-        required double heading,
-      }) async {
-    await _trips.doc(tripId).update({
-      'currentLocation': location,
-      'speed': speed,
-      'heading': heading,
-      'status': TripStatus.active.name,
-    });
-  }
-
-  Future<void> endTrip(String tripId) async {
-    await _trips.doc(tripId).update({
-      'status': TripStatus.completed.name,
-      'completedAt': Timestamp.fromDate(DateTime.now()),
-    });
+  Future<ActiveTrip> getTrip() {
+    return _service.fetchTrip();
   }
 }

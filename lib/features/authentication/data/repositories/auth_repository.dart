@@ -1,29 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../models/driver_model.dart';
 import '../services/auth_service.dart';
+import '../services/driver_service.dart';
 
 class AuthRepository {
   AuthRepository({
     AuthService? authService,
-    FirebaseFirestore? firestore,
-  })  : _authService = authService ?? AuthService(),
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  }) : _authService = authService ?? AuthService();
 
+  final DriverService _driverService = DriverService();
   final AuthService _authService;
-  final FirebaseFirestore _firestore;
 
   User? get currentUser => _authService.currentUser;
 
-  Future<DriverModel> fetchDriver(String uid) async {
-    final doc = await _firestore.collection('drivers').doc(uid).get();
-
-    if (!doc.exists) {
-      throw Exception("Driver profile not found.");
-    }
-
-    return DriverModel.fromMap(uid, doc.data()!);
+  Future<DriverModel> fetchDriver(String uid) {
+    return _driverService.getDriver(uid);
   }
 
   Future<DriverModel> login({
@@ -38,7 +30,7 @@ class AuthRepository {
     return fetchDriver(credential.user!.uid);
   }
 
-  Future<void> logout() async {
-    await _authService.signOut();
+  Future<void> logout() {
+    return _authService.signOut();
   }
 }

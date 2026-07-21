@@ -4,6 +4,7 @@ class DriverModel {
   final String email;
   final String phone;
   final String assignedBus;
+  final bool online;
 
   const DriverModel({
     required this.id,
@@ -11,6 +12,7 @@ class DriverModel {
     required this.email,
     required this.phone,
     required this.assignedBus,
+    required this.online,
   });
 
   factory DriverModel.fromMap(
@@ -23,6 +25,7 @@ class DriverModel {
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
       assignedBus: map['assignedBus'] ?? '',
+      online: map['online'] ?? false,
     );
   }
 
@@ -32,6 +35,7 @@ class DriverModel {
       'email': email,
       'phone': phone,
       'assignedBus': assignedBus,
+      'online': online,
     };
   }
 }
