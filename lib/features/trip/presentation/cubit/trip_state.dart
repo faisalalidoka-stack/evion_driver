@@ -1,23 +1,30 @@
-import '../../data/models/active_trip.dart';
+import '../../data/models/trip_model.dart';
 
 class TripState {
-  final ActiveTrip trip;
+  final TripModel? trip;
+  final bool loading;
+  final String? error;
 
   const TripState({
     required this.trip,
+    required this.loading,
+    this.error,
   });
 
   factory TripState.initial() {
-    return TripState(
-      trip: ActiveTrip.initial(),
-    );
+    return const TripState(trip: null, loading: true);
   }
 
   TripState copyWith({
-    ActiveTrip? trip,
+    TripModel? trip,
+    bool? loading,
+    String? error,
+    bool clearError = false,
   }) {
     return TripState(
       trip: trip ?? this.trip,
+      loading: loading ?? this.loading,
+      error: clearError ? null : (error ?? this.error),
     );
   }
 }

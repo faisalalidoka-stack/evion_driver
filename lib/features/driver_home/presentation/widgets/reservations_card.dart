@@ -7,6 +7,9 @@ import '../../../../core/widgets/dashboard_section_title.dart';
 import '../../../reservations/presentation/cubit/reservation_cubit.dart';
 import '../../../reservations/presentation/cubit/reservation_state.dart';
 
+import '../../../../core/widgets/dashboard_error_card.dart';
+import '../../../authentication/presentation/cubit/auth_cubit.dart';
+
 class ReservationsCard extends StatelessWidget {
   const ReservationsCard({super.key});
 
@@ -15,6 +18,15 @@ class ReservationsCard extends StatelessWidget {
     return BlocBuilder<ReservationCubit, ReservationState>(
       builder: (context, state) {
         if (state.loading) {
+          if (state.error != null) {
+            return DashboardErrorCard(
+              message: state.error!,
+              onRetry: () {
+                final driverId = context.read<AuthCubit>().state.driver!.id;
+                context.read<ReservationCubit>().listenReservations(driverId);
+              },
+            );
+          }
           return const DashboardCard(
             child: Center(
               child: CircularProgressIndicator(),

@@ -4,27 +4,18 @@ import '../../data/repositories/bus_repository.dart';
 import 'bus_state.dart';
 
 class BusCubit extends Cubit<BusState> {
-  BusCubit(
-      this._repository,
-      ) : super(BusState.initial());
+  BusCubit(this._repository) : super(BusState.initial());
 
   final BusRepository _repository;
 
   Future<void> loadBus(String driverId) async {
-    emit(
-      state.copyWith(
-        loading: true,
-      ),
-    );
+    emit(state.copyWith(loading: true, clearError: true));
 
-    final bus =
-    await _repository.getBus(driverId);
-
-    emit(
-      state.copyWith(
-        bus: bus,
-        loading: false,
-      ),
-    );
+    try {
+      final bus = await _repository.getBus(driverId);
+      emit(state.copyWith(bus: bus, loading: false));
+    } catch (e) {
+      emit(state.copyWith(loading: false, error: e.toString()));
+    }
   }
 }

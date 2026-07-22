@@ -10,6 +10,9 @@ import '../../../bus/presentation/cubit/bus_state.dart';
 import '../../../reservations/presentation/cubit/reservation_cubit.dart';
 import '../../../reservations/presentation/cubit/reservation_state.dart';
 
+import '../../../../core/widgets/dashboard_error_card.dart';
+import '../../../authentication/presentation/cubit/auth_cubit.dart';
+
 class BusCard extends StatelessWidget {
   const BusCard({super.key});
 
@@ -18,6 +21,15 @@ class BusCard extends StatelessWidget {
     return BlocBuilder<BusCubit, BusState>(
       builder: (context, busState) {
         if (busState.loading) {
+          if (busState.error != null) {
+            return DashboardErrorCard(
+              message: busState.error!,
+              onRetry: () {
+                final driverId = context.read<AuthCubit>().state.driver!.id;
+                context.read<BusCubit>().loadBus(driverId);
+              },
+            );
+          }
           return const DashboardCard(
             child: Center(
               child: CircularProgressIndicator(),

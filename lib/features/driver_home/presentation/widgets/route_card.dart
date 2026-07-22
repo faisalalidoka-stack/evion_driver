@@ -7,6 +7,9 @@ import '../../../../core/widgets/dashboard_section_title.dart';
 import '/features/route/data/cubit/route_cubit.dart';
 import '/features/route/data/route_state.dart';
 
+import '../../../authentication/presentation/cubit/auth_cubit.dart';
+import '../../../../core/widgets/dashboard_error_card.dart';
+
 
 class RouteCard extends StatelessWidget {
   const RouteCard({super.key});
@@ -16,6 +19,15 @@ class RouteCard extends StatelessWidget {
     return BlocBuilder<RouteCubit, RouteState>(
       builder: (context, state) {
         if (state.loading) {
+          if (state.error != null) {
+            return DashboardErrorCard(
+              message: state.error!,
+              onRetry: () {
+                final driverId = context.read<AuthCubit>().state.driver!.id;
+                context.read<RouteCubit>().loadRoute(driverId);
+              },
+            );
+          }
           return const DashboardCard(
             child: Center(
               child: CircularProgressIndicator(),
