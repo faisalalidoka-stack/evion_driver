@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/reservation_model.dart';
+import '../models/reservation_status.dart';
 
 class ReservationService {
   ReservationService({
@@ -25,16 +26,29 @@ class ReservationService {
           id: doc.id,
           passengerName: data['passengerName'],
           seats: data['seats'],
-          pickupStop: data['pickupStop'],
-          destinationStop: data['destinationStop'],
-          status: data['status'] ?? 'confirmed',
-          boarded: data['boarded'] ?? false,
+          pickupStopId: data['pickupStopId'] ?? '',
+          pickupStopName: data['pickupStopName'] ?? '',
+          destinationStopId: data['destinationStopId'] ?? '',
+          destinationStopName: data['destinationStopName'] ?? '',
+          status: ReservationStatus.fromString(data['status']),
         );
       }).toList();
     });
   }
 
-  Future<void> setBoarded(String reservationId, bool boarded) async {
-    await _reservations.doc(reservationId).update({'boarded': boarded});
+  Future<void> updateStatus(String reservationId, ReservationStatus status) async {
+    await _reservations.doc(reservationId).update({'status': status.firestoreValue});
+  }
+
+  Future<void> completeReservations(List<String> ids) async {
+    if (ids.isEmpty) return;
+
+    final batch = _firestore.batch();
+    for (final id in ids) {
+      batch.update(_reservations.doc(id), {
+        'status': ReservationStatus.completed.firestoreValue,
+      });
+    }
+    await batch.commit();
   }
 }

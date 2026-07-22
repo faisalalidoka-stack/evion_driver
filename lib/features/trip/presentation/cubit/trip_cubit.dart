@@ -105,4 +105,17 @@ class TripCubit extends Cubit<TripState> {
     _stopLocationUpdates();
     return super.close();
   }
+
+  Future<bool> advanceStop(String stopId, int stopIndex) async {
+    final trip = state.trip;
+    if (trip == null) return false;
+
+    try {
+      await _repository.advanceStop(trip.id, stopId, stopIndex);
+      return true;
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+      return false;
+    }
+  }
 }

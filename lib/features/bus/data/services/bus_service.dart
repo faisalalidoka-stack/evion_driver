@@ -9,7 +9,10 @@ class BusService {
 
   final FirebaseFirestore _firestore;
 
-  Future<BusModel> fetchBus(String driverId) async {
+  CollectionReference<Map<String, dynamic>> get _buses =>
+      _firestore.collection('buses');
+
+  Future<String> getAssignedBusId(String driverId) async {
     final driverDoc =
     await _firestore.collection('drivers').doc(driverId).get();
 
@@ -18,23 +21,33 @@ class BusService {
     }
 
     final busId = driverDoc['busId'];
-
-    final busDoc =
-    await _firestore.collection('buses').doc(busId).get();
-
-    if (!busDoc.exists) {
-      throw Exception("Bus not found.");
+    if (busId == null || (busId as String).isEmpty) {
+      throw Exception("No bus assigned to this driver.");
     }
 
-    final data = busDoc.data()!;
+    return busId;
+  }
 
-    return BusModel(
-      id: busDoc.id,
-      code: data['code'],
-      registration: data['registration'],
-      totalSeats: data['totalSeats'],
-      availableSeats: data['availableSeats'],
-      active: data['active'],
-    );
+  Stream<BusModel> watchBus(String busId) {
+    return _buses.doc(busId).snapshots().map((doc) {
+      if (!doc.exists) {
+        throw Exception("Bus not found.");
+      }
+
+      final data = doc.data()!;
+
+      return BusModel(
+        id: doc.id,
+        code: data['code'],
+        registration: data['registration'],
+        totalSeats: data['totalSeats'],
+        availableSeats: data['availableSeats'],
+        active: data['active'],
+      );
+    });
+  }
+
+  Future<void> resetAvailableSeats(String busId, int totalSeats) async {
+    await _buses.doc(busId).update({'availableSeats': totalSeats});
   }
 }

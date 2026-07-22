@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/reservation_model.dart';
+import '../../data/models/reservation_status.dart';
 import '../../data/repositories/reservation_repository.dart';
 import 'reservation_state.dart';
 
@@ -27,8 +28,18 @@ class ReservationCubit extends Cubit<ReservationState> {
     );
   }
 
-  Future<void> toggleBoarded(ReservationModel reservation) {
-    return _repository.setBoarded(reservation.id, !reservation.boarded);
+  Future<void> confirmBoarding(ReservationModel reservation) {
+    if (!reservation.isAwaitingBoarding) return Future.value();
+    return _repository.updateStatus(reservation.id, ReservationStatus.boarded);
+  }
+
+  Future<void> completeBoardedReservations() async {
+    final boardedIds =
+    state.reservations.where((r) => r.isBoarded).map((r) => r.id).toList();
+
+    if (boardedIds.isEmpty) return;
+
+    await _repository.completeReservations(boardedIds);
   }
 
   @override

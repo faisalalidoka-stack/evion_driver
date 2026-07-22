@@ -14,7 +14,11 @@ import '../../../authentication/presentation/cubit/auth_cubit.dart';
 import '../../../bus/presentation/cubit/bus_cubit.dart';
 import '/features/route/data/cubit/route_cubit.dart';
 
+import '../../../reservations/presentation/cubit/reservation_cubit.dart';
+
 import '../cubit/dashboard_cubit.dart';
+
+import 'package:go_router/go_router.dart';
 
 class TripCard extends StatelessWidget {
   const TripCard({super.key});
@@ -89,7 +93,13 @@ class TripCard extends StatelessWidget {
                     bool ok;
                     if (active) {
                       ok = await tripCubit.endTrip();
-                      if (ok) dashboardCubit.setReady();
+                      if (ok) {
+                        dashboardCubit.setReady();
+                        context.read<BusCubit>().resetSeats();
+                        context
+                            .read<ReservationCubit>()
+                            .completeBoardedReservations();
+                      }
                     } else {
                       final bus = context.read<BusCubit>().state.bus;
                       final route =
@@ -118,6 +128,17 @@ class TripCard extends StatelessWidget {
                   label: Text(active ? "End Trip" : "Start Trip"),
                 ),
               ),
+              if (active) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/trip-stops'),
+                    icon: const Icon(Icons.route_outlined),
+                    label: const Text("View Stops"),
+                  ),
+                ),
+              ],
             ],
           ),
         );

@@ -3,15 +3,17 @@ class RouteModel {
   final String name;
   final String start;
   final String destination;
-  final int stopCount;
+  final List<String> stopIds;
 
   const RouteModel({
     required this.id,
     required this.name,
     required this.start,
     required this.destination,
-    required this.stopCount,
+    required this.stopIds,
   });
+
+  int get stopCount => stopIds.length;
 
   factory RouteModel.demo() {
     return const RouteModel(
@@ -19,7 +21,7 @@ class RouteModel {
       name: "Kampala → Makerere",
       start: "Kampala",
       destination: "Makerere",
-      stopCount: 18,
+      stopIds: [],
     );
   }
 
@@ -28,14 +30,14 @@ class RouteModel {
     String? name,
     String? start,
     String? destination,
-    int? stopCount,
+    List<String>? stopIds,
   }) {
     return RouteModel(
       id: id ?? this.id,
       name: name ?? this.name,
       start: start ?? this.start,
       destination: destination ?? this.destination,
-      stopCount: stopCount ?? this.stopCount,
+      stopIds: stopIds ?? this.stopIds,
     );
   }
 }

@@ -33,7 +33,7 @@ class RouteService {
       name: data['name'],
       start: data['start'],
       destination: data['destination'],
-      stopCount: data['stopCount'],
+      stopIds: List<String>.from(data['stopIds'] ?? const []),
     );
   }
 }

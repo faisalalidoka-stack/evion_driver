@@ -8,7 +8,15 @@ class BusRepository {
 
   final BusService _service;
 
-  Future<BusModel> getBus(String driverId) {
-    return _service.fetchBus(driverId);
+  Future<String> getAssignedBusId(String driverId) {
+    return _service.getAssignedBusId(driverId);
+  }
+
+  Stream<BusModel> watchBus(String busId) {
+    return _service.watchBus(busId);
+  }
+
+  Future<void> resetAvailableSeats(String busId, int totalSeats) {
+    return _service.resetAvailableSeats(busId, totalSeats);
   }
 }

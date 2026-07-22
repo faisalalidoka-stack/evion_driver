@@ -14,6 +14,9 @@ class TripModel {
   final TripStatus status;
   final DateTime startedAt;
   final DateTime? completedAt;
+  final int currentStopIndex;
+  final String? currentStopId;
+  final DateTime? departedCurrentStopAt;
 
   const TripModel({
     required this.id,
@@ -27,6 +30,9 @@ class TripModel {
     required this.status,
     required this.startedAt,
     this.completedAt,
+    this.currentStopIndex = -1,
+    this.currentStopId,
+    this.departedCurrentStopAt,
   });
 
   factory TripModel.fromMap(String id, Map<String, dynamic> map) {
@@ -45,6 +51,10 @@ class TripModel {
       ),
       startedAt: (map['startedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       completedAt: (map['completedAt'] as Timestamp?)?.toDate(),
+      currentStopIndex: map['currentStopIndex'] ?? -1,
+      currentStopId: map['currentStopId'],
+      departedCurrentStopAt:
+      (map['departedCurrentStopAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -61,6 +71,11 @@ class TripModel {
       'startedAt': Timestamp.fromDate(startedAt),
       'completedAt':
       completedAt == null ? null : Timestamp.fromDate(completedAt!),
+      'currentStopIndex': currentStopIndex,
+      'currentStopId': currentStopId,
+      'departedCurrentStopAt': departedCurrentStopAt == null
+          ? null
+          : Timestamp.fromDate(departedCurrentStopAt!),
     };
   }
 }

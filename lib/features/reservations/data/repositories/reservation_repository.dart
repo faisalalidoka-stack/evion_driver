@@ -1,4 +1,5 @@
 import '../models/reservation_model.dart';
+import '../models/reservation_status.dart';
 import '../services/reservation_service.dart';
 
 class ReservationRepository {
@@ -12,7 +13,10 @@ class ReservationRepository {
     return _service.reservations(driverId);
   }
 
-  Future<void> setBoarded(String reservationId, bool boarded) {
-    return _service.setBoarded(reservationId, boarded);
+  Future<void> updateStatus(String reservationId, ReservationStatus status) {
+    return _service.updateStatus(reservationId, status);
+  }
+  Future<void> completeReservations(List<String> ids) {
+    return _service.completeReservations(ids);
   }
 }

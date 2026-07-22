@@ -3,11 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/widgets/dashboard_card.dart';
 import '../../../../core/widgets/dashboard_section_title.dart';
+import '../../../../core/widgets/dashboard_error_card.dart';
 
+import '../../../reservations/data/models/reservation_model.dart';
 import '../../../reservations/presentation/cubit/reservation_cubit.dart';
 import '../../../reservations/presentation/cubit/reservation_state.dart';
 
-import '../../../../core/widgets/dashboard_error_card.dart';
 import '../../../authentication/presentation/cubit/auth_cubit.dart';
 
 class ReservationsCard extends StatelessWidget {
@@ -34,8 +35,7 @@ class ReservationsCard extends StatelessWidget {
           );
         }
 
-        final active =
-        state.reservations.where((r) => !r.isCancelled).toList();
+        final active = state.reservations.where((r) => !r.isCancelled).toList();
 
         return DashboardCard(
           child: Column(
@@ -56,41 +56,70 @@ class ReservationsCard extends StatelessWidget {
               const SizedBox(height: 16),
 
               ...state.reservations.take(3).map(
-                    (reservation) => Opacity(
-                  opacity: reservation.isCancelled ? 0.4 : 1,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const CircleAvatar(
-                      child: Icon(Icons.person),
-                    ),
-                    title: Text(reservation.passengerName),
-                    subtitle: Text(
-                      "${reservation.pickupStop} → ${reservation.destinationStop}"
-                          "${reservation.isCancelled ? ' • Cancelled' : ''}",
-                    ),
-                    trailing: reservation.isCancelled
-                        ? Text("${reservation.seats} Seat(s)")
-                        : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text("${reservation.seats} Seat(s)"),
-                        Checkbox(
-                          value: reservation.boarded,
-                          onChanged: (_) {
-                            context
-                                .read<ReservationCubit>()
-                                .toggleBoarded(reservation);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                    (reservation) => _ReservationTile(reservation: reservation),
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class _ReservationTile extends StatelessWidget {
+  final ReservationModel reservation;
+
+  const _ReservationTile({required this.reservation});
+
+  Color _statusColor() {
+    if (reservation.isBoarded || reservation.isCompleted) return Colors.green;
+    if (reservation.isAwaitingBoarding) return Colors.blue;
+    if (reservation.isBoardingSoon) return Colors.orange;
+    if (reservation.isMissed || reservation.isCancelled) return Colors.red;
+    return Colors.grey;
+  }
+
+  String _statusLabel() {
+    if (reservation.isBoarded) return "Boarded";
+    if (reservation.isCompleted) return "Completed";
+    if (reservation.isAwaitingBoarding) return "Awaiting Boarding";
+    if (reservation.isBoardingSoon) return "Boarding Soon";
+    if (reservation.isMissed) return "Missed";
+    if (reservation.isCancelled) return "Cancelled";
+    return "Reserved";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _statusColor();
+
+    return Opacity(
+      opacity: (reservation.isCancelled || reservation.isMissed) ? 0.4 : 1,
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: const CircleAvatar(
+          child: Icon(Icons.person),
+        ),
+        title: Text(reservation.passengerName),
+        subtitle: Text(
+          "${reservation.pickupStopName} → ${reservation.destinationStopName} • "
+              "${reservation.seats} Seat(s)",
+        ),
+        trailing: reservation.isAwaitingBoarding
+            ? ActionChip(
+          onPressed: () =>
+              context.read<ReservationCubit>().confirmBoarding(reservation),
+          avatar: const Icon(Icons.check_circle_outline, size: 18),
+          label: const Text("Board Passenger"),
+          backgroundColor: color.withOpacity(0.1),
+          side: BorderSide(color: color.withOpacity(0.3)),
+        )
+            : Chip(
+          label: Text(_statusLabel(), style: TextStyle(color: color)),
+          backgroundColor: color.withOpacity(0.08),
+          side: BorderSide(color: color.withOpacity(0.3)),
+        ),
+      ),
     );
   }
 }
