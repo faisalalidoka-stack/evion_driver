@@ -7,14 +7,17 @@ import '../../../../core/widgets/dashboard_section_title.dart';
 import '../../../bus/presentation/cubit/bus_cubit.dart';
 import '../../../bus/presentation/cubit/bus_state.dart';
 
+import '../../../reservations/presentation/cubit/reservation_cubit.dart';
+import '../../../reservations/presentation/cubit/reservation_state.dart';
+
 class BusCard extends StatelessWidget {
   const BusCard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BusCubit, BusState>(
-      builder: (context, state) {
-        if (state.loading) {
+      builder: (context, busState) {
+        if (busState.loading) {
           return const DashboardCard(
             child: Center(
               child: CircularProgressIndicator(),
@@ -22,47 +25,56 @@ class BusCard extends StatelessWidget {
           );
         }
 
-        final bus = state.bus;
+        final bus = busState.bus;
 
-        return DashboardCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const DashboardSectionTitle(
-                icon: Icons.directions_bus,
-                title: "Assigned Bus",
-              ),
+        return BlocBuilder<ReservationCubit, ReservationState>(
+          builder: (context, reservationState) {
+            final reservedSeats = reservationState.reservations
+                .where((r) => !r.isCancelled)
+                .fold<int>(0, (sum, r) => sum + r.seats);
 
-              const SizedBox(height: 20),
+            final liveAvailable =
+            (bus.totalSeats - reservedSeats).clamp(0, bus.totalSeats);
 
-              Text(
-                bus.code,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-
-              const SizedBox(height: 16),
-
-              Row(
+            return DashboardCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.badge_outlined),
-                  const SizedBox(width: 8),
-                  Text(bus.registration),
-                ],
-              ),
+                  const DashboardSectionTitle(
+                    icon: Icons.directions_bus,
+                    title: "Assigned Bus",
+                  ),
 
-              const SizedBox(height: 12),
+                  const SizedBox(height: 20),
 
-              Row(
-                children: [
-                  const Icon(Icons.event_seat_outlined),
-                  const SizedBox(width: 8),
                   Text(
-                    "${bus.availableSeats}/${bus.totalSeats} Seats",
+                    bus.code,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Row(
+                    children: [
+                      const Icon(Icons.badge_outlined),
+                      const SizedBox(width: 8),
+                      Text(bus.registration),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Row(
+                    children: [
+                      const Icon(Icons.event_seat_outlined),
+                      const SizedBox(width: 8),
+                      Text("$liveAvailable/${bus.totalSeats} Seats"),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

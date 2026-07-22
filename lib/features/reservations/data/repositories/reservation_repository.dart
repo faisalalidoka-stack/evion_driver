@@ -8,9 +8,11 @@ class ReservationRepository {
 
   final ReservationService _service;
 
-  Stream<List<ReservationModel>> reservations(
-      String driverId,
-      ) {
+  Stream<List<ReservationModel>> reservations(String driverId) {
     return _service.reservations(driverId);
+  }
+
+  Future<void> setBoarded(String reservationId, bool boarded) {
+    return _service.setBoarded(reservationId, boarded);
   }
 }

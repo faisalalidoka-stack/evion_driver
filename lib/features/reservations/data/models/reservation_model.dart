@@ -4,6 +4,7 @@ class ReservationModel {
   final int seats;
   final String pickupStop;
   final String destinationStop;
+  final String status;
   final bool boarded;
 
   const ReservationModel({
@@ -12,8 +13,11 @@ class ReservationModel {
     required this.seats,
     required this.pickupStop,
     required this.destinationStop,
+    required this.status,
     required this.boarded,
   });
+
+  bool get isCancelled => status == 'cancelled';
 
   factory ReservationModel.demo() {
     return const ReservationModel(
@@ -22,6 +26,7 @@ class ReservationModel {
       seats: 1,
       pickupStop: "Wandegeya",
       destinationStop: "Makerere",
+      status: "confirmed",
       boarded: false,
     );
   }

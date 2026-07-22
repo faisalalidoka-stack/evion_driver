@@ -5,12 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
-import '../../../driver_home/presentation/cubit/dashboard_cubit.dart';
-
-import '../../../bus/presentation/cubit/bus_cubit.dart';
-import '/features/route/data/cubit/route_cubit.dart';
-
-import '../../../reservations/presentation/cubit/reservation_cubit.dart';
+import '../../../../core/utils/driver_data_loader.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -35,20 +30,10 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
-
-          final driverId = state.driver!.id;
-
-          context.read<DashboardCubit>().loadDashboard(driverId);
-
-          context.read<BusCubit>().loadBus(driverId);
-
-          context.read<RouteCubit>().loadRoute(driverId);
-
-          context.read<ReservationCubit>().listenReservations(driverId);
+          loadDriverData(context, state.driver!.id);
 
           context.go('/home');
         }
-
 
         if (state.status == AuthStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(

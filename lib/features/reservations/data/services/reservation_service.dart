@@ -9,9 +9,11 @@ class ReservationService {
 
   final FirebaseFirestore _firestore;
 
+  CollectionReference<Map<String, dynamic>> get _reservations =>
+      _firestore.collection('reservations');
+
   Stream<List<ReservationModel>> reservations(String driverId) {
-    return _firestore
-        .collection('reservations')
+    return _reservations
         .where('driverId', isEqualTo: driverId)
         .orderBy('createdAt', descending: true)
         .snapshots()
@@ -25,9 +27,14 @@ class ReservationService {
           seats: data['seats'],
           pickupStop: data['pickupStop'],
           destinationStop: data['destinationStop'],
-          boarded: data['boarded'],
+          status: data['status'] ?? 'confirmed',
+          boarded: data['boarded'] ?? false,
         );
       }).toList();
     });
+  }
+
+  Future<void> setBoarded(String reservationId, bool boarded) async {
+    await _reservations.doc(reservationId).update({'boarded': boarded});
   }
 }

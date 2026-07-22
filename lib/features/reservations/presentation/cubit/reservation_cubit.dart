@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/reservation_repository.dart';
 import 'reservation_state.dart';
 
+import '../../data/models/reservation_model.dart';
+
 class ReservationCubit extends Cubit<ReservationState> {
   ReservationCubit(
       this._repository,
@@ -33,5 +35,8 @@ class ReservationCubit extends Cubit<ReservationState> {
   Future<void> close() {
     _subscription?.cancel();
     return super.close();
+  }
+  Future<void> toggleBoarded(ReservationModel reservation) {
+    return _repository.setBoarded(reservation.id, !reservation.boarded);
   }
 }

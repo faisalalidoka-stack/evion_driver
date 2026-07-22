@@ -22,6 +22,7 @@ import '/features/route/data/cubit/route_cubit.dart';
 import 'features/reservations/data/repositories/reservation_repository.dart';
 import 'features/reservations/presentation/cubit/reservation_cubit.dart';
 
+import 'core/services/location_service.dart';
 
 class EvionDriverApp extends StatelessWidget {
   const EvionDriverApp({super.key});
@@ -45,7 +46,8 @@ class EvionDriverApp extends StatelessWidget {
         BlocProvider<TripCubit>(
           create: (_) => TripCubit(
             TripRepository(),
-          )..loadTrip(),
+            LocationService(),
+          ),
         ),
         BlocProvider<BusCubit>(
           create: (_) => BusCubit(

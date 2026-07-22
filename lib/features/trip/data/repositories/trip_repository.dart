@@ -11,4 +11,19 @@ class TripRepository {
   Future<ActiveTrip> getTrip() {
     return _service.fetchTrip();
   }
+  Future<void> updateLocation(
+      String tripId, {
+        required double latitude,
+        required double longitude,
+        required double speed,
+        required double heading,
+      }) {
+    return _service.updateLocation(
+      tripId,
+      latitude: latitude,
+      longitude: longitude,
+      speed: speed,
+      heading: heading,
+    );
+  }
 }

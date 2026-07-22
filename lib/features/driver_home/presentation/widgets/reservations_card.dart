@@ -22,6 +22,9 @@ class ReservationsCard extends StatelessWidget {
           );
         }
 
+        final active =
+        state.reservations.where((r) => !r.isCancelled).toList();
+
         return DashboardCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,24 +37,41 @@ class ReservationsCard extends StatelessWidget {
               const SizedBox(height: 20),
 
               Text(
-                "${state.reservations.length} Reservation(s)",
+                "${active.length} Reservation(s)",
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
 
               const SizedBox(height: 16),
 
               ...state.reservations.take(3).map(
-                    (reservation) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const CircleAvatar(
-                    child: Icon(Icons.person),
-                  ),
-                  title: Text(reservation.passengerName),
-                  subtitle: Text(
-                    "${reservation.pickupStop} → ${reservation.destinationStop}",
-                  ),
-                  trailing: Text(
-                    "${reservation.seats} Seat(s)",
+                    (reservation) => Opacity(
+                  opacity: reservation.isCancelled ? 0.4 : 1,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const CircleAvatar(
+                      child: Icon(Icons.person),
+                    ),
+                    title: Text(reservation.passengerName),
+                    subtitle: Text(
+                      "${reservation.pickupStop} → ${reservation.destinationStop}"
+                          "${reservation.isCancelled ? ' • Cancelled' : ''}",
+                    ),
+                    trailing: reservation.isCancelled
+                        ? Text("${reservation.seats} Seat(s)")
+                        : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("${reservation.seats} Seat(s)"),
+                        Checkbox(
+                          value: reservation.boarded,
+                          onChanged: (_) {
+                            context
+                                .read<ReservationCubit>()
+                                .toggleBoarded(reservation);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

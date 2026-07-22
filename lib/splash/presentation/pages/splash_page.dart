@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../features/authentication/presentation/cubit/auth_cubit.dart';
 import '../../../features/authentication/presentation/cubit/auth_state.dart';
 
+import '../../../core/utils/driver_data_loader.dart';
+
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -27,6 +29,8 @@ class _SplashPageState extends State<SplashPage> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
+          loadDriverData(context, state.driver!.id);
+
           context.go('/home');
         } else if (state.status == AuthStatus.unauthenticated) {
           context.go('/login');
